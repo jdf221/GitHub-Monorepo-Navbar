@@ -1,0 +1,18 @@
+{
+	"private": true,
+	"scripts": {
+		"release:chrome": "cd src && webstore upload --auto-publish",
+		"release:firefox": "cd src && web-ext-submit"
+	},
+	"dependencies": {
+		"webextension-polyfill": "^0.4.0"
+	},
+	"devDependencies": {
+		"chrome-webstore-upload-cli": "^1.2.0",
+		"eslint": "^7.18.0",
+		"eslint-config-prettier": "^7.2.0",
+		"prettier": "^2.2.1",
+		"web-ext": "^4.1.0",
+		"web-ext-submit": "^4.1.0"
+	}
+}
