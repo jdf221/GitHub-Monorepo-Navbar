@@ -4,7 +4,7 @@
 
 ## Todo
 
-- [x] Add commit hash based caching
+- [x] Add commit timestamp based caching
 - [ ] Write the navbar generating code
 - [ ] Add workspace grouping
 - [ ] Figure out how to re-add navbar on page change

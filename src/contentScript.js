@@ -4,27 +4,27 @@ const MonorepoInfoCache = new (class {
   _cacheObject = {};
 
   async load() {
-    this._cacheObject = (
-      await browser.storage.local.get("cachedMonorepoInfo")
-    ).cachedMonorepoInfo;
+    this._cacheObject =
+      (await browser.storage.local.get("cachedMonorepoInfo"))
+        .cachedMonorepoInfo || {};
   }
 
   getCachedRepositoryData(repositoryName) {
     return this._cacheObject[repositoryName];
   }
 
-  async setPackagesObject(repositoryName, commitHash, allPackages) {
+  async setPackagesObject(repositoryName, latestCommitTimestamp, allPackages) {
     this._cacheObject[repositoryName] = {
-      commitHash: commitHash,
+      latestCommitTimestamp: latestCommitTimestamp,
       allPackages: allPackages,
     };
 
     return this.save();
   }
 
-  async markAsNonMonorepo(repositoryName, commitHash) {
+  async markAsNonMonorepo(repositoryName, latestCommitTimestamp) {
     this._cacheObject[repositoryName] = {
-      commitHash: commitHash,
+      latestCommitTimestamp: latestCommitTimestamp,
       inNotMonorepo: true,
     };
 
@@ -38,20 +38,114 @@ const MonorepoInfoCache = new (class {
   }
 })();
 
-const Repository = new (class {
-  name = document
-    .querySelector("meta[name='octolytics-dimension-repository_nwo']")
-    ?.getAttribute("content");
+const NavbarGenerator = new (class {
+  generate(allPackages) {
+    let rootCasing = "R";
+    const firstGroup = Object.values(allPackages)[0];
+    if (
+      firstGroup &&
+      firstGroup[0] &&
+      firstGroup[0].name === firstGroup[0].name.toLowerCase()
+    ) {
+      rootCasing = "r";
+    }
 
-  latestCommitHash = Page.latestCommitElement?.querySelector(
-    ".flex-items-center .text-mono"
-  )?.innerText;
+    let generatedHtml = `
+<nav class="monorepo-nav UnderlineNav pr-3 pr-md-4 pr-lg-5 bg-gray-light">
+  <ul class="UnderlineNav-body list-style-none">
+    <li class="d-flex">
+      <a
+        class="selected UnderlineNav-item hx_underlinenav-item no-wrap"
+        href="${document.querySelector("strong[itemprop='name'] a").href}"
+      >
+        <svg
+          aria-label="Directory"
+          class="octicon octicon-file-directory text-color-icon-directory mr-3"
+          height="16"
+          viewBox="0 0 16 16"
+          version="1.1"
+          width="16"
+          role="img"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M1.75 1A1.75 1.75 0 000 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0016 13.25v-8.5A1.75 1.75 0 0014.25 3h-6.5a.25.25 0 01-.2-.1l-.9-1.2c-.33-.44-.85-.7-1.4-.7h-3.5z"
+          ></path>
+        </svg>
+        <span>${rootCasing}oot</span>
+      </a>
+    </li>
+`;
+
+    generatedHtml += "</ul></nav>";
+
+    return generatedHtml;
+  }
+})();
+
+const Page = new (class {
+  isRepository;
+  isOnRepositoryHomepage;
+  latestCommitElement;
+
+  constructor() {
+    this.isRepository =
+      document
+        .querySelector("meta[name='octolytics-dimension-repository_nwo']")
+        ?.getAttribute("content") ||
+      document.querySelector("div[aria-labelledby='files']");
+    this.isOnRepositoryHomepage =
+      document.querySelector("h2.mb-3.h4")?.innerText === "About";
+    this.latestCommitElement = document.querySelector(
+      ".repository-content .Box"
+    )?.children[0];
+  }
+
+  addMonorepoNavbar(allPackages) {
+    if (allPackages && !document.querySelector(".monorepo-navbar")) {
+      this.latestCommitElement.outerHTML =
+        this.latestCommitElement.outerHTML +
+        NavbarGenerator.generate(allPackages);
+    }
+  }
+
+  expandWorkspace() {}
+
+  collapseWorkspace() {}
+})();
+
+const Repository = new (class {
+  name;
+  homePageLink;
+
+  latestCommitTimestamp;
+
+  constructor() {
+    this.name = document
+      .querySelector("meta[name='octolytics-dimension-repository_nwo']")
+      ?.getAttribute("content");
+    this.homePageLink = "/" + this.name;
+    this.latestCommitTimestamp = new Date(
+      Page.latestCommitElement
+        ?.querySelector("relative-time")
+        ?.getAttribute("datetime")
+    ).getTime();
+  }
 
   async getWorkspaceGlobs() {
     let workspaceGlobs = [];
 
+    let homepageDocument = document;
+    if (!Page.isOnRepositoryHomepage) {
+      const parser = new DOMParser();
+      const homepageHtml = await fetch(this.homePageLink).then((response) =>
+        response.text()
+      );
+      homepageDocument = parser.parseFromString(homepageHtml, "text/html");
+    }
+
     if (
-      document.querySelector(
+      homepageDocument.querySelector(
         "div[aria-labelledby='files'] div[role='rowheader'] a[title='lerna.json']"
       )
     ) {
@@ -59,7 +153,7 @@ const Repository = new (class {
         (content) => JSON.parse(content).packages
       );
     } else if (
-      document.querySelector(
+      homepageDocument.querySelector(
         "div[aria-labelledby='files'] div[role='rowheader'] a[title='package.json']"
       )
     ) {
@@ -135,69 +229,8 @@ const Repository = new (class {
   }
 })();
 
-const NavbarGenerator = new (class {
-  generate(allPackages) {
-    let rootCasing = "R";
-    const firstGroup = Object.values(allPackages)[0];
-    if (
-      firstGroup &&
-      firstGroup[0] &&
-      firstGroup[0].name === firstGroup[0].name.toLowerCase()
-    ) {
-      rootCasing = "r";
-    }
-
-    let generatedHtml = `
-<nav class="monorepo-nav UnderlineNav pr-3 pr-md-4 pr-lg-5 bg-gray-light">
-  <ul class="UnderlineNav-body list-style-none">
-    <li class="d-flex">
-      <a
-        class="selected UnderlineNav-item hx_underlinenav-item no-wrap"
-        href="${document.querySelector("strong[itemprop='name'] a").href}"
-      >
-        <svg
-          aria-label="Directory"
-          class="octicon octicon-file-directory text-color-icon-directory mr-1"
-          height="16"
-          viewBox="0 0 16 16"
-          version="1.1"
-          width="16"
-          role="img"
-        >
-          <path
-            fill-rule="evenodd"
-            d="M1.75 1A1.75 1.75 0 000 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0016 13.25v-8.5A1.75 1.75 0 0014.25 3h-6.5a.25.25 0 01-.2-.1l-.9-1.2c-.33-.44-.85-.7-1.4-.7h-3.5z"
-          ></path>
-        </svg>
-        <span>${rootCasing}oot</span>
-      </a>
-    </li>
-`;
-
-
-  }
-})();
-
-const Page = new (class {
-  latestCommitElement = document.querySelector(".repository-content .Box")
-    ?.children[0];
-
-  isRepository() {
-    // Confirm we are on a repository page by checking if there is a repository name and a files div.
-    return (
-      Repository.name || document.querySelector("div[aria-labelledby='files']")
-    );
-  }
-
-  addMonorepoNavbar(allPackages) {}
-
-  expandWorkspace() {}
-
-  collapseWorkspace() {}
-})();
-
 (async () => {
-  if (await Page.isRepository()) {
+  if (Page.isRepository) {
     await MonorepoInfoCache.load();
 
     const cachedRepositoryData = MonorepoInfoCache.getCachedRepositoryData(
@@ -207,21 +240,25 @@ const Page = new (class {
     let allPackages;
     if (cachedRepositoryData) {
       if (cachedRepositoryData.isNotMonorepo) return;
-      if (cachedRepositoryData.commitHash === Repository.latestCommitHash) {
+      if (
+        cachedRepositoryData.latestCommitTimestamp >=
+        Repository.latestCommitTimestamp
+      ) {
         allPackages = cachedRepositoryData.allPackages;
       }
     }
 
     if (
       !cachedRepositoryData ||
-      cachedRepositoryData.commitHash !== Repository.latestCommitHash
+      cachedRepositoryData.latestCommitTimestamp <
+        Repository.latestCommitTimestamp
     ) {
       allPackages = await Repository.getAllPackages();
 
       if (Object.keys(allPackages).length === 0) {
         await MonorepoInfoCache.markAsNonMonorepo(
           Repository.name,
-          Repository.latestCommitHash
+          Repository.latestCommitTimestamp
         );
 
         return;
@@ -229,11 +266,12 @@ const Page = new (class {
 
       await MonorepoInfoCache.setPackagesObject(
         Repository.name,
-        Repository.latestCommitHash,
+        Repository.latestCommitTimestamp,
         allPackages
       );
     }
 
     console.log(allPackages);
+    Page.addMonorepoNavbar(allPackages);
   }
 })();
