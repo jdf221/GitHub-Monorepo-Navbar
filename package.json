@@ -8,6 +8,7 @@
 		"webextension-polyfill": "^0.4.0"
 	},
 	"devDependencies": {
+		"babel-eslint": "^10.1.0",
 		"chrome-webstore-upload-cli": "^1.2.0",
 		"eslint": "^7.18.0",
 		"eslint-config-prettier": "^7.2.0",

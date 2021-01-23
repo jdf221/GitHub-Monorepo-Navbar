@@ -4,6 +4,7 @@
 
 ## Todo
 
-- [ ] Add commit hash based caching
-- [ ] Fix dropdown absolute positioning
+- [x] Add commit hash based caching
+- [ ] Write the navbar generating code
+- [ ] Add workspace grouping
 - [ ] Figure out how to re-add navbar on page change

@@ -7,11 +7,16 @@
   "icons": {
     "128": "icon.png"
   },
-  "permissions": ["https://github.com/*", "https://api.github.com/*"],
+  "permissions": [
+    "storage",
+    "https://github.com/*",
+    "https://api.github.com/*"
+  ],
   "content_scripts": [
     {
       "matches": ["https://github.com/*"],
-      "js": ["contentScript.js"],
+      "js": ["browser-polyfill.js", "contentScript.js"],
+      "css": ["styles.css"],
       "run_at": "document_end"
     }
   ]
