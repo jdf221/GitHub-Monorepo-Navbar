@@ -53,7 +53,8 @@ async function addMonorepoNavbar() {
 document.body.addEventListener(
   "click",
   (event) => {
-    event.path.forEach((element) => {
+    console.log(event);
+    event.composedPath().forEach((element) => {
       if (element?.classList?.contains("monorepo-navbar-workspace-open")) {
         [
           ...document.querySelectorAll(
@@ -116,7 +117,6 @@ const observer = new MutationObserver((mutationRecords) => {
   });
 });
 
-// observe everything except attributes
 observer.observe(
   document.querySelector(
     ".progress-pjax-loader.width-full.js-pjax-loader-bar.Progress.position-fixed"

@@ -5,7 +5,7 @@ class Page {
     );
 
     this.isRepository =
-      this.repositoryNameElement?.getAttribute("content") ||
+      this.repositoryNameElement?.getAttribute("content") &&
       document.querySelector("div[aria-labelledby='files']");
     this.isOnRepositoryHomepage =
       document.querySelector("h2.mb-3.h4")?.innerText === "About";
@@ -23,8 +23,4 @@ class Page {
         this.latestCommitElement.outerHTML + generatedHtml;
     }
   }
-
-  expandWorkspace() {}
-
-  collapseWorkspace() {}
 }

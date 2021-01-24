@@ -78,6 +78,7 @@ class Repository {
 
     for (const workspacePath of workspacePaths) {
       for (const fileInfo of await this.getDirectoryContent(workspacePath)) {
+        if (fileInfo.type !== "dir") continue;
         // Ignores a dir that is listed as a workspace
         if (workspacePaths.includes(fileInfo.path)) continue;
         if (!allPackages[workspacePath]) {
