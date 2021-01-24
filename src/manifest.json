@@ -1,9 +1,15 @@
 {
+  "manifest_version": 2,
   "name": "GitHub Monorepo Navbar",
   "version": "1.0.0",
   "description": "Adds a navbar with buttons for each package in a monorepo",
+  "author": "Jared (jdf2)",
+  "developer": {
+    "name": "Jared (jdf2)",
+    "url": "https://jaredfurlow.com/"
+  },
   "homepage_url": "https://github.com/jdf221/GithubMonorepoNavbar",
-  "manifest_version": 2,
+
   "icons": {
     "128": "icon.png"
   },
@@ -15,8 +21,14 @@
   "content_scripts": [
     {
       "matches": ["https://github.com/*"],
-      "js": ["browser-polyfill.js", "contentScript.js"],
-      "css": ["styles.css"],
+      "js": [
+        "browser-polyfill.js",
+        "MonorepoInfoCache.js",
+        "Page.js",
+        "Repository.js",
+        "NavbarGenerator.js",
+        "contentScript.js"
+      ],
       "run_at": "document_end"
     }
   ]
