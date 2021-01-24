@@ -4,10 +4,6 @@
   "version": "1.0.0",
   "description": "Adds a navbar with buttons for each package in a monorepo",
   "author": "Jared (jdf2)",
-  "developer": {
-    "name": "Jared (jdf2)",
-    "url": "https://jaredfurlow.com/"
-  },
   "homepage_url": "https://github.com/jdf221/GithubMonorepoNavbar",
 
   "icons": {
