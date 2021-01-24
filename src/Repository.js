@@ -32,6 +32,24 @@ class Repository {
       );
     } else if (
       homepageDocument.querySelector(
+        "div[aria-labelledby='files'] div[role='rowheader'] a[title='nx.json']"
+      )
+    ) {
+      workspaceGlobs = await this.getFileContent("nx.json").then((content) => {
+        let finalWorkspaces = [];
+        const config = JSON.parse(content);
+
+        finalWorkspaces.push(
+          (config?.workspaceLayout?.appsDir || "apps") + "/*"
+        );
+        finalWorkspaces.push(
+          (config?.workspaceLayout?.libsDir || "libs") + "/*"
+        );
+
+        return finalWorkspaces;
+      });
+    } else if (
+      homepageDocument.querySelector(
         "div[aria-labelledby='files'] div[role='rowheader'] a[title='package.json']"
       )
     ) {

@@ -53,7 +53,6 @@ async function addMonorepoNavbar() {
 document.body.addEventListener(
   "click",
   (event) => {
-    console.log(event);
     event.composedPath().forEach((element) => {
       if (element?.classList?.contains("monorepo-navbar-workspace-open")) {
         [
@@ -96,6 +95,11 @@ function handlePageLoad() {
     }
     checkCount++;
   }, 50);
+}
+
+if (location.href.includes("clearMonorepoNavbarCache=true")) {
+  browser.storage.local.clear();
+  console.log("GitHub Monorepo Navbar: Cache cleared!");
 }
 
 handlePageLoad();
