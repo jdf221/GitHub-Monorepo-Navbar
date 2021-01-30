@@ -4,15 +4,11 @@
 
 Short video example: https://www.youtube.com/watch?v=BjnUreKyqCs
 
-### How to install:
+### Extension install
 
-**Google Chrome**
+**Chrome:** https://chrome.google.com/webstore/detail/github-monorepo-navbar/iigikckkdgebggplbllmlmkdafemmcej
 
-1. Download this repo as a [ZIP file from GitHub](https://github.com/jdf221/GitHub-Monorepo-Navbar/raw/main/dist/GitHub-Monorepo-Navbar.zip).
-1. Unzip the file and you should have a folder named `GitHub-Monorepo-Navbar`.
-1. In Chrome go to the extensions page (`chrome://extensions`).
-1. Enable Developer Mode.
-1. Drag the `GitHub-Monorepo-Navbar` folder anywhere on the page to import it (do not delete the folder afterwards).
+**Firefox:** https://addons.mozilla.org/en-US/firefox/addon/github-monorepo-navbar
 
 ---
 

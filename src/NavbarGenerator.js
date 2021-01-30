@@ -13,7 +13,7 @@ class NavbarGenerator {
     }
 
     let generatedHtml = `
-<nav class="monorepo-nav UnderlineNav pr-3 pr-md-4 pr-lg-5 bg-gray-light">
+<nav class="monorepo-navbar UnderlineNav pr-3 pr-md-4 pr-lg-5 bg-gray-light">
   <ul class="UnderlineNav-body list-style-none">
     <li class="d-flex">
       <a
