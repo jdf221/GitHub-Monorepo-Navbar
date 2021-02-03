@@ -11,6 +11,7 @@ class Repository {
   }
 
   async getWorkspaceGlobs() {
+    // TODO: Pretty up the packages info file finder since I've kinda just tacked onto it and need to rewrite it.
     let workspaceGlobs = [];
 
     let homepageDocument = document;
@@ -22,19 +23,30 @@ class Repository {
       homepageDocument = parser.parseFromString(homepageHtml, "text/html");
     }
 
+    let searchPackageJson = true;
     if (
       homepageDocument.querySelector(
         "div[aria-labelledby='files'] div[role='rowheader'] a[title='lerna.json']"
       )
     ) {
+      searchPackageJson = false;
       workspaceGlobs = await this.getFileContent("lerna.json").then(
-        (content) => JSON.parse(content).packages
+        (content) => {
+          const parsed = JSON.parse(content);
+
+          if (parsed.useWorkspaces) {
+            searchPackageJson = true;
+          }
+
+          return parsed.packages;
+        }
       );
     } else if (
       homepageDocument.querySelector(
         "div[aria-labelledby='files'] div[role='rowheader'] a[title='nx.json']"
       )
     ) {
+      searchPackageJson = false;
       workspaceGlobs = await this.getFileContent("nx.json").then((content) => {
         let finalWorkspaces = [];
         const config = JSON.parse(content);
@@ -48,10 +60,13 @@ class Repository {
 
         return finalWorkspaces;
       });
-    } else if (
+    }
+
+    if (
       homepageDocument.querySelector(
         "div[aria-labelledby='files'] div[role='rowheader'] a[title='package.json']"
-      )
+      ) &&
+      searchPackageJson
     ) {
       workspaceGlobs = await this.getFileContent("package.json").then(
         (content) => JSON.parse(content).workspaces
