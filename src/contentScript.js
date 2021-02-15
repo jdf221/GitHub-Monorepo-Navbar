@@ -46,7 +46,9 @@ async function addMonorepoNavbar() {
       );
     }
 
-    thisPage.addMonorepoNavbar(navbarGenerator.generate(allPackages));
+    thisPage.addMonorepoNavbar(
+      navbarGenerator.generate(allPackages, thisRepository.name.split("/")[1])
+    );
   }
 }
 

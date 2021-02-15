@@ -1,5 +1,5 @@
 class NavbarGenerator {
-  generate(allPackages) {
+  generate(allPackages, repositoryName) {
     if (!allPackages) return "";
 
     let rootCasing = "R";
@@ -55,7 +55,14 @@ class NavbarGenerator {
         if (groupName === "packages") {
           for (const packageInfo of allPackages[groupName]) {
             if (!allPackages[packageInfo.name]) {
-              packagesHtml += this.generateSimpleListElement(packageInfo);
+              if (
+                packageInfo.name.toLowerCase() === repositoryName.toLowerCase()
+              ) {
+                packagesHtml =
+                  this.generateSimpleListElement(packageInfo) + packagesHtml;
+              } else {
+                packagesHtml += this.generateSimpleListElement(packageInfo);
+              }
             }
           }
         } else {
