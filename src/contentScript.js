@@ -25,6 +25,7 @@ async function addMonorepoNavbar() {
 
     if (
       !cachedRepositoryData ||
+      !cachedRepositoryData.latestCommitTimestamp ||
       cachedRepositoryData.latestCommitTimestamp <
         thisRepository.latestCommitTimestamp
     ) {
@@ -55,38 +56,38 @@ async function addMonorepoNavbar() {
 document.body.addEventListener(
   "click",
   (event) => {
-    event.composedPath().forEach((element) => {
+    for (const element of event.composedPath()) {
       if (element?.classList?.contains("monorepo-navbar-workspace-open")) {
-        [
+        for (const element of [
           ...document.querySelectorAll(
-            ".monorepo-navbar-workspace-item[data-monorepo-navbar-parent-workspace='" +
-              element.getAttribute("data-monorepo-navbar-parent-workspace") +
-              "']"
+            `.monorepo-navbar-workspace-item[data-monorepo-navbar-parent-workspace='${element.getAttribute(
+              "data-monorepo-navbar-parent-workspace"
+            )}']`
           ),
-        ].forEach((element) => {
+        ]) {
           element.toggleAttribute("hidden");
-        });
+        }
       }
 
       if (element?.classList?.contains("monorepo-navbar-workspace-close")) {
-        [
+        for (const element of [
           ...document.querySelectorAll(
-            ".monorepo-navbar-workspace-item[data-monorepo-navbar-parent-workspace='" +
-              element.getAttribute("data-monorepo-navbar-parent-workspace") +
-              "']"
+            `.monorepo-navbar-workspace-item[data-monorepo-navbar-parent-workspace='${element.getAttribute(
+              "data-monorepo-navbar-parent-workspace"
+            )}']`
           ),
-        ].forEach((element) => {
+        ]) {
           element.setAttribute("hidden", "");
-        });
+        }
       }
-    });
+    }
   },
   false
 );
 
 function handlePageLoad() {
   let checkCount = 0;
-  let checkingInterval = setInterval(() => {
+  const checkingInterval = setInterval(() => {
     if (
       document.querySelector("div[aria-labelledby='files']")?.children?.length >
         1 ||
@@ -108,7 +109,7 @@ handlePageLoad();
 
 let loadingState = false;
 const observer = new MutationObserver((mutationRecords) => {
-  mutationRecords.forEach((mutation) => {
+  for (const mutation of mutationRecords) {
     if (mutation.attributeName === "class") {
       if (mutation.target.classList.contains("is-loading")) {
         loadingState = true;
@@ -120,7 +121,7 @@ const observer = new MutationObserver((mutationRecords) => {
         loadingState = false;
       }
     }
-  });
+  }
 });
 
 observer.observe(
