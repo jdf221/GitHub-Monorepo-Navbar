@@ -74,7 +74,7 @@ class NavbarGenerator {
       }
     }
 
-    generatedHtml += workspacesHtml + packagesHtml + "</ul></nav>";
+    generatedHtml += `${workspacesHtml + packagesHtml}</ul></nav>`;
 
     return generatedHtml;
   }

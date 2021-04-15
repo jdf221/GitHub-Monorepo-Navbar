@@ -8,7 +8,7 @@ class Page {
       this.repositoryNameElement?.getAttribute("content") &&
       document.querySelector("div[aria-labelledby='files']");
     this.isOnRepositoryHomepage =
-      document.querySelector("h2.mb-3.h4")?.innerText === "About";
+      document.querySelector("h2.mb-3.h4")?.textContent === "About";
 
     if (this.isRepository) {
       this.latestCommitElement = document.querySelector(

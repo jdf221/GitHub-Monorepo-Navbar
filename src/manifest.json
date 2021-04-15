@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "GitHub Monorepo Navbar",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Adds a navbar with buttons for each package in a monorepo",
   "author": "Jared (jdf2)",
   "homepage_url": "https://github.com/jdf221/Github-Monorepo-Navbar",

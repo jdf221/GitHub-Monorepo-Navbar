@@ -2,7 +2,7 @@ class Repository {
   constructor(page) {
     this.page = page;
     this.name = this.page.repositoryNameElement?.getAttribute("content");
-    this.homePageLink = "/" + this.name;
+    this.homePageLink = `/${this.name}`;
     this.latestCommitTimestamp = new Date(
       this.page.latestCommitElement
         ?.querySelector("relative-time")
@@ -48,14 +48,12 @@ class Repository {
     ) {
       searchPackageJson = false;
       workspaceGlobs = await this.getFileContent("nx.json").then((content) => {
-        let finalWorkspaces = [];
+        const finalWorkspaces = [];
         const config = JSON.parse(content);
 
         finalWorkspaces.push(
-          (config?.workspaceLayout?.appsDir || "apps") + "/*"
-        );
-        finalWorkspaces.push(
-          (config?.workspaceLayout?.libsDir || "libs") + "/*"
+          `${config?.workspaceLayout?.appsDir || "apps"}/*`,
+          `${config?.workspaceLayout?.libsDir || "libs"}/*`
         );
 
         return finalWorkspaces;
@@ -77,7 +75,7 @@ class Repository {
       return [];
     }
 
-    let normalizedWorkspaceGlobs = [];
+    const normalizedWorkspaceGlobs = [];
 
     // Goal is for the path to look like this: `path/to/packages/*`
     for (const globPath of workspaceGlobs) {
@@ -100,7 +98,7 @@ class Repository {
 
   // TODO: May need to support /**/* and wildcards in names `packages/ext-*`
   async getAllPackages() {
-    let allPackages = {};
+    const allPackages = {};
     // Currently not doing anything with the glob stuff so just having the base path is easier
     const workspacePaths = (await this.getWorkspaceGlobs()).map(
       (workspaceGlob) => {
